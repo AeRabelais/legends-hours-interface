@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "legends-hours"
+version = "0.1.0"
+description = ""
+authors = ["Ashia Lewis <pantagruelspendulum@protonmail.com>"]
+readme = "README.md"
+packages = [{include = "legends_hours"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

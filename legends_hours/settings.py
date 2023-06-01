@@ -1,0 +1,1 @@
+DEFAULT_DB_PATH = "legends_hours.db"

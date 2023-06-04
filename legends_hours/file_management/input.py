@@ -1,8 +1,3 @@
-"""
-Parse the uploaded excel sheet. Return the employee, employeeId, regularHours, start of week, and end of week.
-Extract start of the week and end of the week from the name of the report file.
-
-"""
 import pandas as pd 
 from settings import relevant_excel_cols
 import re
@@ -10,6 +5,8 @@ from datetime import datetime, timedelta
 
 # Return the structured hours dataframe. 
 def parse_time_file(hours_file_path: str):
+
+    __check_file_format__(hours_file_path)
 
     # Return filtered down dataframe.
     time_df = ingest_time_file(hours_file_path)
@@ -25,19 +22,19 @@ def parse_time_file(hours_file_path: str):
     
     return parsed_time_df 
 
-
-# Read in the excel file.
+# Read in the time report file.
 def ingest_time_file(hours_file_path: str):
 
-    time_df = pd.read_excel(hours_file_path)
+    time_df = pd.read_csv(hours_file_path)
 
+    __check_columns_exist__(time_df)
     # Extract only the relevant columns.
     filtered_time_df = time_df[relevant_excel_cols]
     filtered_time_df["Reg Hours"] = filtered_time_df["Reg Hours"].astype(int)
 
     return filtered_time_df 
 
-# Extract the week start and end from the excel file.
+# Extract the week start and end from the time report file.
 def extract_week_from_title(hours_file_path: str):
 
     parsed_start_match = re.search("^\d{1,2}-\d{1,2}-\d{4}$", hours_file_path)
@@ -54,4 +51,13 @@ def extract_week_from_title(hours_file_path: str):
 
     return start_date, end_date
 
+def __check_file_format__(hours_file_path: str):
 
+    if not hours_file_path.endswith('.csv'):
+        raise ValueError(f"The file report path: {hours_file_path} has an invalid extension.")
+
+def __check_columns_exist__(hours_report_df: pd.DataFrame):
+
+    for column in relevant_excel_cols:
+        if column not in hours_report_df.columns:
+            raise KeyError(f"The key {column} is missing from the report columns.")

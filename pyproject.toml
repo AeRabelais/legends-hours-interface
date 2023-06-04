@@ -8,6 +8,9 @@ packages = [{include = "legends_hours"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+attrdict = "^2.0.1"
+attrdict3 = "^2.0.2"
+gooey = "^1.0.8.1"
 
 
 [build-system]

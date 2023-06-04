@@ -17,7 +17,7 @@ def main():
     excel_parser.add_argument("excel-file", help="The excel file containing the stored employee time events for the week.", widget="FileChooser")
     # Add notes to the employee overtime.
     notes_parser = subparsers.add_parser("add-notes", help="Add notes regarding employee overtime events.")
-    notes_parser.add_argument("employee", help="Full name of the employee you'd like to comment on. Please write full name as 'FirstName LastName'.", widget="TextField")
+    notes_parser.add_argument("employee", help="Full name of the employee you'd like to comment on.", widget="FilterableDropdown")
     notes_parser.add_argument("comment", type=str, help="The comment about why the employee was allowed over time.", widget="TextField")
     notes_parser.add_argument("week-date", help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser")
 

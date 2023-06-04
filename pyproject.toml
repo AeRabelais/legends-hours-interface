@@ -2,7 +2,7 @@
 name = "legends-hours"
 version = "0.1.0"
 description = ""
-authors = ["Ashia Lewis <pantagruelspendulum@protonmail.com>"]
+authors = ["Ashia Livaudais <pantagruelspendulum@protonmail.com>"]
 readme = "README.md"
 packages = [{include = "legends_hours"}]
 

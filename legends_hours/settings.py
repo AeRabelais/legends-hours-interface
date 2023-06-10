@@ -20,4 +20,5 @@ menu=[
     ]
 
 # EXCEL RELEVANT COLUMNS
-relevant_excel_cols = ["Employee", "Employee ID", "Reg Hours"]
+relevant_excel_cols = ["Employee", " Reg Hours",  " Employee ID"]
+

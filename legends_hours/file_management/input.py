@@ -17,8 +17,8 @@ def parse_time_file(hours_file_path: str):
     parsed_time_df = time_df.groupby(['Employee']).agg({' Reg Hours': 'sum'}).reset_index()
 
     # Make first name and last name columns that are a split of the employee name on the comma.
-    parsed_time_df['first_name'] = parsed_time_df['Employee'].str.split(',').str[1].str.upper().str.strip()
-    parsed_time_df['last_name'] = parsed_time_df['Employee'].str.split(',').str[0].str.upper().str.strip()
+    parsed_time_df['firstName'] = parsed_time_df['Employee'].str.split(',').str[1].str.upper().str.strip()
+    parsed_time_df['lastName'] = parsed_time_df['Employee'].str.split(',').str[0].str.upper().str.strip()
 
     # Add an id column that produces a unique UUID for each employee.
     parsed_time_df['id'] = parsed_time_df.apply(lambda row: str(uuid.uuid4()), axis=1)
@@ -31,13 +31,16 @@ def parse_time_file(hours_file_path: str):
     ]
     choices = [0, 1, 2]
 
-    parsed_time_df['Flag'] = np.select(conditions, choices, default=0)
+    parsed_time_df['flag'] = np.select(conditions, choices, default=0)
+
+    # Rename the hours and employee columns.
+    parsed_time_df.rename(columns={" Reg Hours": "hours", "Employee": "employee"}, inplace=True)
 
     # Add start date and end date columns.
     start_date, end_date = extract_week_from_title(hours_file_path)
 
-    parsed_time_df["Start Date"] = start_date
-    parsed_time_df["End Date"] = end_date
+    parsed_time_df["startDate"] = start_date
+    parsed_time_df["endDate"] = end_date
         
     return parsed_time_df 
 

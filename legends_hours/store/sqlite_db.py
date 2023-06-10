@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Connection
 from typing import List
 from legends_hours.settings import DEFAULT_DB_PATH
-from legends_hours.store.schema import report_table_query
+from legends_hours.store.schema import report_table_query, comments_table_query
 import pandas as pd 
 from datetime import datetime
 
@@ -19,7 +19,7 @@ def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     conn = sqlite3.connect(db_file)
 
     # Add report table, if it doesn't exist.
-    create_tables([report_table_query])
+    create_tables([report_table_query, comments_table_query])
 
     return conn
 
@@ -47,16 +47,13 @@ def add_report_item(conn, item_df: pd.DataFrame):
         item_df: a dataframe with information parsed from the initial excel file.
     """
 
-    cursor = conn.cursor()
-
-    row_lists = [tuple(item_df.loc[idx, :].values.flatten().tolist()) for idx in len(item_df.index)]
+    item_df.to_sql('report', conn, if_exists='append', index=False)
     
-    cursor.executemany("""INSERT INTO report VALUES(?, ?, ?, ?, ?, ?, ?)""", row_lists)
-    conn.commit()
-
 # Upsert notes for a particular employee on a certain week.
-def add_time_notes(conn: sqlite3.Connection, notes: str):
-    pass
+def add_comment_item(conn: sqlite3.Connection, item_df: pd.DataFrame):
+    
+    item_df.to_sql('comment', conn, if_exists='append', index=False)
+
 
 # Return report information for all employees on a given week.
 def get_weekly_report(conn: sqlite3.Connection, week):
@@ -65,7 +62,6 @@ def get_weekly_report(conn: sqlite3.Connection, week):
 # Return the report information for all flagged employees in a particular week.
 def get_flagged_employees(conn: sqlite3.Connection, week):
     pass
-
 
 
 # TODO: Rewrite this to account for new tables.

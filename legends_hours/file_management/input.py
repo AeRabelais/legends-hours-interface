@@ -14,6 +14,11 @@ def parse_time_file(hours_file_path: str):
     # Aggregate and group by the dataframe columns.
     parsed_time_df = time_df.groupby(['Employee', 'EmployeeID']).agg({'Reg Hours': 'sum'}).reset_index()
 
+    # TODO: Make first name and last name columns that are a split of the employee name on the comma.
+
+    # TODO: Add an id column that produces a unique UUID for each employee.
+    # TODO: Add flag column. Add values 0, to employees within the right time, 1 to employees ~36, 2 to employess ~40
+
     # Add start date and end date columns.
     start_date, end_date = extract_week_from_title(hours_file_path)
 

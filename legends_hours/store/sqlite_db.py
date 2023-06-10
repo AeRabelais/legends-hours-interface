@@ -4,6 +4,7 @@ from typing import List
 from legends_hours.settings import DEFAULT_DB_PATH
 from legends_hours.store.schema import report_table_query
 import pandas as pd 
+from datetime import datetime
 
 def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     """ 
@@ -17,7 +18,7 @@ def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     """
     conn = sqlite3.connect(db_file)
 
-    # Add employee and hours_worked tables, if it doesn't exist.
+    # Add report table, if it doesn't exist.
     create_tables([report_table_query])
 
     return conn
@@ -36,11 +37,10 @@ def create_tables(conn: Connection, list_create_tables_sql: List[str]):
         cursor.execute(table_sql)
 
 
-
-# Add item to the "hours_worked" table.
-def add_hours_worked(conn, item_df: pd.DataFrame):
+# Add item to the "report" table.
+def add_report_item(conn, item_df: pd.DataFrame):
     """
-    Adds an hours item that holds information about the hours worked by employees for each week.
+    Adds a report item that holds information about the hours worked by employees for each week.
 
     Args:
         conn: a sqlite3 Connection object.
@@ -54,10 +54,24 @@ def add_hours_worked(conn, item_df: pd.DataFrame):
     cursor.executemany("""INSERT INTO report VALUES(?, ?, ?, ?, ?, ?, ?)""", row_lists)
     conn.commit()
 
+# Upsert notes for a particular employee on a certain week.
+def add_time_notes(conn: sqlite3.Connection, notes: str):
+    pass
+
+# Return report information for all employees on a given week.
+def get_weekly_report(conn: sqlite3.Connection, week):
+    pass
+
+# Return the report information for all flagged employees in a particular week.
+def get_flagged_employees(conn: sqlite3.Connection, week):
+    pass
+
+
+
 # TODO: Rewrite this to account for new tables.
 def find_employee_by_name(conn: sqlite3.Connection, employee_name: str):
     """
-    Returns the employee identifier using the name.
+    Returns the information related to an employee using the name.
 
     Args:
         conn: a sqlite3 Connection object.
@@ -69,7 +83,12 @@ def find_employee_by_name(conn: sqlite3.Connection, employee_name: str):
 
     cursor = conn.cursor()
 
-    result = cursor.execute(f"""SELECT id FROM employee WHERE employeeName='{employee_name}'""")
-    id = result.fetchone()
+    result = cursor.execute(f"""SELECT * FROM report WHERE employeeName='{employee_name}'""")
+    employee = result.fetchone()
 
-    return id
+    return employee
+
+def __check_week_exists__():
+    """
+    Checks whether a report for the week on the input file has already been entered.
+    """

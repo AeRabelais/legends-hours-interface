@@ -56,16 +56,47 @@ def add_comment_item(conn: sqlite3.Connection, item_df: pd.DataFrame):
 
 
 # Return report information for all employees on a given week.
-def get_weekly_report(conn: sqlite3.Connection, week):
-    pass
+def get_weekly_report(conn: sqlite3.Connection, date):
+
+    cursor = conn.cursor()
+
+    # Find the week containing the given date
+    result = cursor.execute('''
+        SELECT * FROM report
+        WHERE ? BETWEEN startDate AND endDate
+        ORDER BY employee
+        ''', (date,))
+
+    report = result.fetchall()  # Retrieve the first matching report item
+
+    cursor.close()
+    conn.close()
+
+    return report
 
 # Return the report information for all flagged employees in a particular week.
-def get_flagged_employees(conn: sqlite3.Connection, week):
-    pass
+def get_flagged_employees(conn: sqlite3.Connection, date):
+
+    cursor = conn.cursor()
+
+    # Find the week containing the given date
+    result = cursor.execute('''
+        SELECT * FROM report
+        WHERE ? BETWEEN startDate AND endDate
+        AND WHERE flag != 0
+        ORDER BY employee
+        ''', (date,))
+
+    flagged_employees = result.fetchall()  # Retrieve the first matching report item
+
+    cursor.close()
+    conn.close()
+
+    return flagged_employees
 
 
 # TODO: Rewrite this to account for new tables.
-def find_employee_by_name(conn: sqlite3.Connection, employee_name: str):
+def find_employee_by_name(conn: sqlite3.Connection, first_name: str, last_name: str, employee_name: str):
     """
     Returns the information related to an employee using the name.
 

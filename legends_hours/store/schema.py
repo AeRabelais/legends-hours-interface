@@ -9,7 +9,8 @@ def report_table_query():
                             employee TEXT,
                             hours INTEGER, 
                             startDate TEXT,
-                            endDate TEXT
+                            endDate TEXT,
+                            flag INTEGER
                             ); 
                         """
 

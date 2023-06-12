@@ -22,3 +22,27 @@ menu=[
 # EXCEL RELEVANT COLUMNS
 relevant_excel_cols = ["Employee", " Reg Hours",  " Employee ID"]
 
+## DATABASE SCHEMA
+
+REPORT_TABLE_QUERY = """
+                        CREATE TABLE IF NOT EXISTS report(
+                            id TEXT PRIMARY KEY, 
+                            firstName TEXT,
+                            lastName TEXT, 
+                            employee TEXT,
+                            hours INTEGER, 
+                            startDate TEXT,
+                            endDate TEXT,
+                            flag INTEGER
+                            ); 
+                        """
+
+COMMENTS_TABLE_QUERY = """
+                            CREATE TABLE IF NOT EXISTS comment (
+                                id TEXT PRIMARY KEY,
+                                comment TEXT,
+                                report_id INTEGER,
+                                FOREIGN KEY (report_id) REFERENCES report (id)
+                            );
+                            """
+

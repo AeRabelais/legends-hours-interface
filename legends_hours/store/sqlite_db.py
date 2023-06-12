@@ -1,10 +1,11 @@
 import sqlite3
 from sqlite3 import Connection
 from typing import List, Optional
-from legends_hours.settings import DEFAULT_DB_PATH
-from legends_hours.store.schema import report_table_query, comments_table_query
+from legends_hours.settings import DEFAULT_DB_PATH, REPORT_TABLE_QUERY, COMMENTS_TABLE_QUERY
 import pandas as pd 
 from datetime import datetime
+
+# CURSORS RETURN EMPTY WHEN NO RESULTS ARE FOUND
 
 def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     """ 
@@ -19,7 +20,7 @@ def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     conn = sqlite3.connect(db_file)
 
     # Add report table, if it doesn't exist.
-    create_tables([report_table_query, comments_table_query])
+    create_tables(conn, [REPORT_TABLE_QUERY, COMMENTS_TABLE_QUERY])
 
     return conn
 
@@ -70,48 +71,45 @@ def get_weekly_report(conn: sqlite3.Connection, date):
     report = result.fetchall()  # Retrieve the first matching report item
 
     cursor.close()
-    conn.close()
 
     return report
 
-def get_report_by_name_week(conn: sqlite3.Connection, date, first_name, last_name):
+def get_report_by_name_week(conn: sqlite3.Connection, date: str, first_name: str, last_name: str):
     
     cursor = conn.cursor()
 
     # Find the report item matching the date and employee name.
     result = cursor.execute(f'''
         SELECT * FROM report
-        WHERE ? BETWEEN startDate AND endDate 
-        AND WHERE firstName='{first_name}' AND
-        AND WHERE lastName='{last_name}'
+        WHERE {date} BETWEEN startDate AND endDate 
+        AND firstName='{first_name.upper()}'
+        AND lastName='{last_name.upper()}'
         ORDER BY employee
-        ''', (date,))
+        ''')
 
     report = result.fetchall()  # Retrieve the first matching report item
 
     cursor.close()
-    conn.close()
 
     return report
 
 
 # Return the report information for all flagged employees in a particular week.
-def get_flagged_employees(conn: sqlite3.Connection, date):
+def get_flagged_employees(conn: sqlite3.Connection, date: str):
 
     cursor = conn.cursor()
 
     # Find the week containing the given date
-    result = cursor.execute('''
+    result = cursor.execute(f'''
         SELECT * FROM report
-        WHERE ? BETWEEN startDate AND endDate
-        AND WHERE flag != 0
+        WHERE '{date}' BETWEEN startDate AND endDate
+        AND flag != 0
         ORDER BY employee
-        ''', (date,))
+        ''')
 
     flagged_employees = result.fetchall()  # Retrieve the first matching report item
 
     cursor.close()
-    conn.close()
 
     return flagged_employees
 
@@ -135,8 +133,8 @@ def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], l
     result = cursor.execute(f"""
                             SELECT * FROM report 
                             WHERE firstName='{first_name}' AND
-                            WHERE lastName='{last_name}'
-                            GROUP BY week
+                            lastName='{last_name}'
+                            GROUP BY startDate
                             """)
     employee = result.fetchone()
 

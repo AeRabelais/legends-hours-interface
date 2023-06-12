@@ -5,7 +5,7 @@ from legends_hours.settings import relevant_excel_cols
 import re
 from datetime import datetime, timedelta
 
-def create_comment_item(report_id: str, comment: str):
+def create_comment_item(report_id: str, comment: str) -> pd.DataFrame:
 
     comment_dict = {"id": [str(uuid.uuid4())], "comment": [comment], "report_id": [report_id]}
     comment = pd.DataFrame(comment_dict)

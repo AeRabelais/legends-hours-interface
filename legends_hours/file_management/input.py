@@ -5,6 +5,13 @@ from legends_hours.settings import relevant_excel_cols
 import re
 from datetime import datetime, timedelta
 
+def create_comment_item(report_id: str, comment: str):
+
+    comment_dict = {"id": str(uuid.uuid4()), "commment": comment, "report_id": str}
+    comment = pd.DataFrame(comment_dict)
+
+    return comment 
+
 # Return the structured hours dataframe. 
 def parse_time_file(hours_file_path: str):
 

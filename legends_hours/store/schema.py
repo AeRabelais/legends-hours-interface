@@ -1,17 +1,32 @@
 
 def report_table_query():
 
-    hours_table_query = """CREATE TABLE IF NOT EXISTS report(
+    report_table_query = """
+                        CREATE TABLE IF NOT EXISTS report(
                             id INTEGER PRIMARY KEY, 
-                            employeeFirst TEXT,
-                            employeeLast TEXT, 
-                            hours REAL, 
-                            comments TEXT, 
-                            start_week TEXT,
-                            end_week TEXT
-                            ); """
+                            firstName TEXT,
+                            lastName TEXT, 
+                            employee TEXT,
+                            hours INTEGER, 
+                            startDate TEXT,
+                            endDate TEXT,
+                            flag INTEGER
+                            ); 
+                        """
 
-    return hours_table_query
+    return report_table_query
+
+def comments_table_query():
+
+    comments_table_query = """
+                            CREATE TABLE IF NOT EXISTS comment (
+                                id INTEGER PRIMARY KEY,
+                                comment TEXT,
+                                report_id INTEGER,
+                                FOREIGN KEY (report_id) REFERENCES report (id)
+                            );
+                            """
+
 
 
 

@@ -1,10 +1,11 @@
 import sqlite3
 from sqlite3 import Connection
-from typing import List
-from legends_hours.settings import DEFAULT_DB_PATH
-from legends_hours.store.schema import report_table_query
+from typing import List, Optional
+from legends_hours.settings import DEFAULT_DB_PATH, REPORT_TABLE_QUERY, COMMENTS_TABLE_QUERY
 import pandas as pd 
 from datetime import datetime
+
+# CURSORS RETURN EMPTY WHEN NO RESULTS ARE FOUND
 
 def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     """ 
@@ -19,7 +20,7 @@ def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     conn = sqlite3.connect(db_file)
 
     # Add report table, if it doesn't exist.
-    create_tables([report_table_query])
+    create_tables(conn, [REPORT_TABLE_QUERY, COMMENTS_TABLE_QUERY])
 
     return conn
 
@@ -47,29 +48,73 @@ def add_report_item(conn, item_df: pd.DataFrame):
         item_df: a dataframe with information parsed from the initial excel file.
     """
 
-    cursor = conn.cursor()
-
-    row_lists = [tuple(item_df.loc[idx, :].values.flatten().tolist()) for idx in len(item_df.index)]
+    item_df.to_sql('report', conn, if_exists='append', index=False)
     
-    cursor.executemany("""INSERT INTO report VALUES(?, ?, ?, ?, ?, ?, ?)""", row_lists)
-    conn.commit()
-
 # Upsert notes for a particular employee on a certain week.
-def add_time_notes(conn: sqlite3.Connection, notes: str):
-    pass
+def add_comment_item(conn: sqlite3.Connection, item_df: pd.DataFrame):
+    
+    item_df.to_sql('comment', conn, if_exists='append', index=False)
+
 
 # Return report information for all employees on a given week.
-def get_weekly_report(conn: sqlite3.Connection, week):
-    pass
+def get_weekly_report(conn: sqlite3.Connection, date):
+
+    cursor = conn.cursor()
+
+    # Find the week containing the given date
+    result = cursor.execute('''
+        SELECT * FROM report
+        WHERE ? BETWEEN startDate AND endDate
+        ORDER BY employee
+        ''', (date,))
+
+    report = result.fetchall()  # Retrieve the first matching report item
+
+    cursor.close()
+
+    return report
+
+def get_report_by_name_week(conn: sqlite3.Connection, date: str, first_name: str, last_name: str):
+    
+    cursor = conn.cursor()
+
+    # Find the report item matching the date and employee name.
+    result = cursor.execute(f'''
+        SELECT * FROM report
+        WHERE {date} BETWEEN startDate AND endDate 
+        AND firstName='{first_name.upper()}'
+        AND lastName='{last_name.upper()}'
+        ORDER BY employee
+        ''')
+
+    report = result.fetchall()  # Retrieve the first matching report item
+
+    cursor.close()
+
+    return report
+
 
 # Return the report information for all flagged employees in a particular week.
-def get_flagged_employees(conn: sqlite3.Connection, week):
-    pass
+def get_flagged_employees(conn: sqlite3.Connection, date: str):
+
+    cursor = conn.cursor()
+
+    # Find the week containing the given date
+    result = cursor.execute(f'''
+        SELECT * FROM report
+        WHERE '{date}' BETWEEN startDate AND endDate
+        AND flag != 0
+        ORDER BY employee
+        ''')
+
+    flagged_employees = result.fetchall()  # Retrieve the first matching report item
+
+    cursor.close()
+
+    return flagged_employees
 
 
-
-# TODO: Rewrite this to account for new tables.
-def find_employee_by_name(conn: sqlite3.Connection, employee_name: str):
+def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], last_name: Optional[str], employee_full_name: Optional[str]):
     """
     Returns the information related to an employee using the name.
 
@@ -80,15 +125,31 @@ def find_employee_by_name(conn: sqlite3.Connection, employee_name: str):
     Returns:
         The identifier used to represent the employee of interest.
     """
-
+    if (first_name and last_name and employee_full_name ) is None:
+        raise ValueError("A first, last, or full name in the format 'LastName,FirstName' must be provided.")
+    
     cursor = conn.cursor()
 
-    result = cursor.execute(f"""SELECT * FROM report WHERE employeeName='{employee_name}'""")
+    result = cursor.execute(f"""
+                            SELECT * FROM report 
+                            WHERE firstName='{first_name}' AND
+                            lastName='{last_name}'
+                            GROUP BY startDate
+                            """)
     employee = result.fetchone()
 
     return employee
 
-def __check_week_exists__():
-    """
-    Checks whether a report for the week on the input file has already been entered.
-    """
+def get_comment_by_id(conn: sqlite3.Connection, report_id: str):
+    
+    cursor = conn.cursor()
+
+    result = cursor.execute(f"""
+                            SELECT * FROM comment
+                            WHERE report_id = '{report_id}' 
+                            """)
+    comment = result.fetchone()
+
+    return comment
+
+

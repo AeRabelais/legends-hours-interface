@@ -62,11 +62,11 @@ def get_weekly_report(conn: sqlite3.Connection, date):
     cursor = conn.cursor()
 
     # Find the week containing the given date
-    result = cursor.execute('''
+    result = cursor.execute(f'''
         SELECT * FROM report
-        WHERE ? BETWEEN startDate AND endDate
+        WHERE {date} BETWEEN startDate AND endDate
         ORDER BY employee
-        ''', (date,))
+        ''')
 
     report = result.fetchall()  # Retrieve the first matching report item
 
@@ -87,7 +87,7 @@ def get_report_by_name_week(conn: sqlite3.Connection, date: str, first_name: str
         ORDER BY employee
         ''')
 
-    report = result.fetchall()  # Retrieve the first matching report item
+    report = result.fetchone()  # Retrieve the first matching report item
 
     cursor.close()
 
@@ -131,7 +131,7 @@ def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], l
     cursor = conn.cursor()
 
     result = cursor.execute(f"""
-                            SELECT * FROM report 
+                            SELECT id FROM report 
                             WHERE firstName='{first_name}' AND
                             lastName='{last_name}'
                             GROUP BY startDate

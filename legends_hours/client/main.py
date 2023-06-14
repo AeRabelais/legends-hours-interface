@@ -110,6 +110,12 @@ def main():
     args = parser.parse_args()
     if getattr(args, "__command", None) == "parse-time-events":
         parse_time_events(args)
+    elif getattr(args, "__command", None) == "add-notes":
+        add_notes(args)
+    elif getattr(args, "__command", None) == "compile-week-hours":
+        compile_week_hours(args)
+    elif getattr(args, "__command", None) == "export-overtime-pdf":
+        export_overtime_pdf(args)
 
 
 if __name__ == "__main__":

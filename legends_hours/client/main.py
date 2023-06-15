@@ -17,6 +17,7 @@ import sys
         terminal_font_color="#ff0000",
         body_bg_color='#262626')
 def main():
+
     conn = create_connection()
     parser = GooeyParser(description="Legends SL Time Events Interface")
     
@@ -38,7 +39,6 @@ def main():
 
     # Return the over time pdf file.
     overtime_pdf_parser = subparsers.add_parser("export-overtime-pdf", help="Export the pdf listing overtime events.")
-    overtime_pdf_parser.add_argument("FilePath", type=str, help="The path where you'd like to place the export file", widget="DirChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
     compile_hours_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
     args = parser.parse_args()

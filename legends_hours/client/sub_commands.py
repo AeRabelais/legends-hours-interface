@@ -38,6 +38,9 @@ def compile_week_hours(conn, args):
     # Use get_weekly_report to get all information for the week.
     weekly_report_df = get_weekly_report(conn, args.WeekDay)
 
+    if len(weekly_report_df.index) < 1:
+        raise Warning(f"No time event report has been found for the date: {args.WeekDay}.")
+
     # Feed the dataframe into the output function to create the excel file.
     create_excel_with_flags(weekly_report_df, args.OutputFilePath)
 

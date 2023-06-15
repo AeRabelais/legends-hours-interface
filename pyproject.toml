@@ -12,6 +12,7 @@ pandas = "^2.0.2"
 attrdict = "^2.0.1"
 attrdict3 = "^2.0.2"
 gooey = "^1.0.8.1"
+openpyxl = "^3.1.2"
 
 
 [tool.poetry.group.dev.dependencies]

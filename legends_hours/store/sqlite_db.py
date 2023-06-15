@@ -107,6 +107,18 @@ def get_flagged_employees(conn: sqlite3.Connection, date: str):
 
     return flagged_employees
 
+def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str):
+
+    flagged_comments_query = """
+                            SELECT r.employee, r.hours, r.flag, c.comment
+                            FROM report r
+                            INNER JOIN comment c ON r.id = c.report_id
+                            WHERE {date} BETWEEN r.startDate AND r.endDate
+                            """
+    
+    flag_comments = pd.read_sql(flagged_comments_query, conn)
+
+    return flag_comments
 
 def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], last_name: Optional[str], employee_full_name: Optional[str]):
     """
@@ -134,20 +146,7 @@ def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], l
 
     return employee
 
-def find_all_employees(conn: sqlite3.Connection):
-    
-    # cursor = conn.cursor()
-
-    # result = cursor.execute(f"""
-    #                         SELECT DISTINCT firstName || ' ' || lastName AS fullName
-    #                         FROM reports
-    #                         """)
-    
-    # all_emps_results = result.fetchall()
-
-    # all_employees = [full_name[0] for full_name in all_emps_results]
-
-    # return all_employees
+def find_all_employee_names(conn: sqlite3.Connection):
 
     employees_query = "SELECT DISTINCT firstName || ' ' || lastName AS fullName FROM reports"
 

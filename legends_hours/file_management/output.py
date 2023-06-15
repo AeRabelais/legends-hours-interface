@@ -5,6 +5,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from legends_hours.settings import column_headers
 
 
 def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
@@ -13,7 +14,7 @@ def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
     sheet = workbook.active
 
     # Write the column headers to the sheet
-    column_headers = list(data_frame.columns)
+    column_headers = column_headers
     for col_idx, header in enumerate(column_headers, start=1):
         sheet.cell(row=1, column=col_idx).value = header
 
@@ -37,7 +38,7 @@ def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
 
 def create_pdf_with_comments(data_frame: pd.DataFrame, file_path: str):
     # Filter rows with non-empty comments
-    filtered_df = data_frame[data_frame['notes'].notnull()]
+    filtered_df = data_frame[data_frame['comment'].notnull()]
 
     start_date = str(data_frame['startDate'][0])
 

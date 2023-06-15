@@ -3,70 +3,8 @@ from gooey.python_bindings.gooey_decorator import Gooey
 from legends_hours.store.sqlite_db import *
 from legends_hours.file_management.input import *
 from legends_hours.settings import menu
+from legends_hours.client.sub_commands import *
 import sys 
-
-def parse_time_events(conn, args):
-
-    print("Parsing time events report for the week.")
-
-    report_df = parse_time_file(args.ReportFilePath)
-    add_report_item(conn, report_df)
-
-    # Message about end command.
-    print(f"The time events for the report file at the following path: {args.ReportFilePath} have been ingested.")
-
-def add_notes(conn, args):
-    
-    print(f"Searching the database for employee: {args.EmployeeName}, on {args.WeekDay}.")
-
-    # Get employee first and last name and date. Find their report id for the week in the connection.
-    first, last = (args.EmployeeName).split(' ')
-    report_id = get_report_by_name_week(conn=conn, date=args.WeekDay, first_name=first, last_name=last)
-
-    # If no report id is found, determine whether the employee or week-date can't be found.
-    if len(report_id) < 1:
-            raise ValueError(f"No entries that include the following date {args.WeekDay} could be found for employee {args.EmployeeName}. Please ensure the date is not beyond a week into the future, and that the employee was working during this time.")
- 
-    comment = create_comment_item(report_id, args.Comment)
-    add_comment_item(conn, comment)
-
-    # Add comment to the database.
-
-def compile_week_hours(conn, args):
-    
-    print(f"Compiling total hours for the following week: {args.WeekDay}.")
-
-    # Use get_weekly_report to get all information for the week.
-    weekly_report_df = get_weekly_report(conn, args.WeekDay)
-
-    # Feed the dataframe into the output function to create the excel file.
-
-
-def export_overtime_pdf(conn, args):
-
-    print(f"Creating an overtime review document for the week of the following date: {args.WeekDay}.")
-
-    employees = get_flagged_employees(conn, args.WeekDay)
-
-    # From each tuple, pull the id.
-    employee_ids = [employee[0] for employee in employees]
-
-    comments = []
-    # Find the comments associated with these ids.
-    comments = [
-                {
-                    "comment": get_comment_by_id(conn, employee[0]), 
-                    "employee": "replace/with/name/idx", 
-                    "hours": "replace/with/hours/idx",
-                } 
-                for employee in employees
-                ] 
-
-    if len(comments) < 1:
-        raise Warning("No comments regarding employee overtime have been left.")
-    
-    # Give information about the flagged employee, hours, and comments to compile into the PDF.
-  
 
 
 @Gooey(program_name="Legends Time Events Interface",
@@ -96,10 +34,12 @@ def main():
     # Return the hours information for a certain week. 
     compile_hours_parser = subparsers.add_parser("compile-week-hours", help="Return an excel file with time events for the specified week.")
     compile_hours_parser.add_argument("WeekDay", type=str, help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
+    compile_hours_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
     # Return the over time pdf file.
     overtime_pdf_parser = subparsers.add_parser("export-overtime-pdf", help="Export the pdf listing overtime events.")
     overtime_pdf_parser.add_argument("FilePath", type=str, help="The path where you'd like to place the export file", widget="DirChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
+    compile_hours_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
     args = parser.parse_args()
     if getattr(args, "__command", None) == "parse-time-events":

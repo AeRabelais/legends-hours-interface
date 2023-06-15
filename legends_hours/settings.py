@@ -46,3 +46,4 @@ COMMENTS_TABLE_QUERY = """
                             );
                             """
 
+column_headers = ["employee", "hours", "flag",  "startDate", "endDate"]

@@ -43,7 +43,7 @@ def main():
 
     args = parser.parse_args()
     if getattr(args, "__command", None) == "parse-time-events":
-        parse_time_events(conn, args)
+        add_time_events(conn, args)
     elif getattr(args, "__command", None) == "add-notes":
         add_notes(conn, args)
     elif getattr(args, "__command", None) == "compile-week-hours":

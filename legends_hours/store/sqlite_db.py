@@ -5,7 +5,6 @@ from legends_hours.settings import DEFAULT_DB_PATH, REPORT_TABLE_QUERY, COMMENTS
 import pandas as pd 
 from datetime import datetime
 
-# CURSORS RETURN EMPTY WHEN NO RESULTS ARE FOUND
 
 def create_connection(db_file: str=DEFAULT_DB_PATH) -> Connection:
     """ 

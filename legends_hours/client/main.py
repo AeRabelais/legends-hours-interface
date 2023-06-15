@@ -27,7 +27,7 @@ def main():
 
     # Add notes to the employee overtime.
     notes_parser = subparsers.add_parser("add-notes", help="Add notes regarding employee overtime events.")
-    notes_parser.add_argument("EmployeeName", help="The First and Last name of the employee you'd like to comment on.", choices = find_all_employees(conn), widget="FilterableDropdown",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
+    notes_parser.add_argument("EmployeeName", help="The First and Last name of the employee you'd like to comment on.", choices = find_all_employee_names(conn), widget="FilterableDropdown",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
     notes_parser.add_argument("Comment", type=str, help="The comment about why the employee was allowed over time.", widget="TextField",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
     notes_parser.add_argument("WeekDay", help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 

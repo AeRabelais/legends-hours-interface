@@ -71,9 +71,9 @@ def create_pdf_with_comments(data_frame: pd.DataFrame, file_path: str):
 
     # Iterate over the filtered DataFrame rows and add content to the list
     for _, row in filtered_df.iterrows():
-        employee_name = row['employeeName']
-        total_hours = row['totalHours']
-        comments = row['notes']
+        employee_name = row['employee']
+        total_hours = row['hours']
+        comments = row['comment']
 
         block_content = f"<b>Employee:</b> {employee_name}, <b>Total Hours:</b> {total_hours}, <b>Comments:</b> {comments}"
         content.append(Paragraph(block_content, paragraph_style))

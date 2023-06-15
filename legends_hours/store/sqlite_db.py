@@ -59,20 +59,14 @@ def add_comment_item(conn: sqlite3.Connection, item_df: pd.DataFrame):
 # Return report information for all employees on a given week.
 def get_weekly_report(conn: sqlite3.Connection, date):
 
-    cursor = conn.cursor()
+    report_query = f'''
+            SELECT * FROM report
+            WHERE {date} BETWEEN startDate AND endDate
+            ORDER BY employee
+            '''
+    weekly_report = pd.read_sql(report_query, conn)
 
-    # Find the week containing the given date
-    result = cursor.execute(f'''
-        SELECT * FROM report
-        WHERE {date} BETWEEN startDate AND endDate
-        ORDER BY employee
-        ''')
-
-    report = result.fetchall()  # Retrieve the first matching report item
-
-    cursor.close()
-
-    return report
+    return weekly_report
 
 def get_report_by_name_week(conn: sqlite3.Connection, date: str, first_name: str, last_name: str):
     
@@ -140,6 +134,28 @@ def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], l
 
     return employee
 
+def find_all_employees(conn: sqlite3.Connection):
+    
+    # cursor = conn.cursor()
+
+    # result = cursor.execute(f"""
+    #                         SELECT DISTINCT firstName || ' ' || lastName AS fullName
+    #                         FROM reports
+    #                         """)
+    
+    # all_emps_results = result.fetchall()
+
+    # all_employees = [full_name[0] for full_name in all_emps_results]
+
+    # return all_employees
+
+    employees_query = "SELECT DISTINCT firstName || ' ' || lastName AS fullName FROM reports"
+
+    all_employees = pd.read_sql(employees_query, conn)
+
+    return all_employees['fullName']
+
+
 def get_comment_by_id(conn: sqlite3.Connection, report_id: str):
     
     cursor = conn.cursor()
@@ -151,5 +167,4 @@ def get_comment_by_id(conn: sqlite3.Connection, report_id: str):
     comment = result.fetchone()
 
     return comment
-
 

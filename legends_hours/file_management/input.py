@@ -59,7 +59,7 @@ def ingest_time_file(hours_file_path: str):
     __check_columns_exist__(time_df)
     # Extract only the relevant columns.
     filtered_time_df = time_df[relevant_excel_cols]
-    filtered_time_df[" Reg Hours"] = filtered_time_df[" Reg Hours"].astype(int)
+    filtered_time_df.loc[:, " Reg Hours"] = filtered_time_df.loc[:, " Reg Hours"].astype(int)
 
     return filtered_time_df 
 

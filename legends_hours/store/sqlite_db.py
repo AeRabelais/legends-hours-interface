@@ -51,7 +51,7 @@ def add_report_item(conn, item_df: pd.DataFrame):
     
 # Upsert notes for a particular employee on a certain week.
 def add_comment_item(conn: sqlite3.Connection, item_df: pd.DataFrame):
-    
+    """"""
     item_df.to_sql('comment', conn, if_exists='append', index=False)
 
 
@@ -110,7 +110,7 @@ def get_flagged_employees(conn: sqlite3.Connection, date: str):
 def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str):
 
     flagged_comments_query = f"""
-                            SELECT r.employee, r.hours, r.flag, c.comment
+                            SELECT r.employee, r.hours, r.flag, c.comment, r.startDate
                             FROM report r
                             INNER JOIN comment c ON r.id = c.report_id
                             WHERE '{date}' BETWEEN r.startDate AND r.endDate

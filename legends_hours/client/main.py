@@ -18,10 +18,10 @@ import sys
         body_bg_color='#262626')
 def main():
 
-    conn = create_connection()
+    conn = create_connection(db_file='/Users/ae_rabelais/Documents/legends-hours-interface/legends_hours.db')
     parser = GooeyParser(description="Legends SL Time Report Interface")
     
-    subparsers = parser.add_subparsers(help="subcommand help")
+    subparsers = parser.add_subparsers(help="subcommand help", dest='command')
     
     excel_parser = subparsers.add_parser("parse-time-events", help="Parses time events from a valid csv file.", )
     excel_parser.add_argument("ReportFilePath", help="The report file containing the stored employee time events for the week.", widget="FileChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636',})
@@ -32,6 +32,7 @@ def main():
     notes_parser.add_argument("Comment", type=str, help="The comment about why the employee was allowed over time.", widget="TextField",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
     notes_parser.add_argument("WeekDay", help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
+
     # Return the hours information for a certain week. 
     compile_hours_parser = subparsers.add_parser("compile-week-hours", help="Return an excel file with time events for the specified week.")
     compile_hours_parser.add_argument("WeekDay", type=str, help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
@@ -39,17 +40,21 @@ def main():
 
     # Return the over time pdf file.
     overtime_pdf_parser = subparsers.add_parser("export-overtime-pdf", help="Export the pdf listing overtime events.")
+    overtime_pdf_parser.add_argument("WeekDay", type=str, help="The start or end date of the week you're looking for. You can also use the current date for the most recent week.", widget="DateChooser",gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
     overtime_pdf_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
     args = parser.parse_args()
-    if getattr(args, "__command", None) == "parse-time-events":
+
+    if args.command == 'parse-time-events': # Logic works.
         add_time_events(conn, args)
-    elif getattr(args, "__command", None) == "add-notes":
+    elif args.command == 'add-notes': # Logic works.
         add_notes(conn, args)
-    elif getattr(args, "__command", None) == "compile-week-hours":
+    elif args.command == 'compile-week-hours': # Logic works.
         compile_week_hours(conn, args)
-    elif getattr(args, "__command", None) == "export-overtime-pdf":
+    elif args.command == 'export-overtime-pdf':# Logi c
         export_overtime_pdf(conn, args)
+    else:
+        raise ValueError("You've entered an invalid command.")
 
 
 if __name__ == "__main__":

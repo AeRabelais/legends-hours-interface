@@ -5,7 +5,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
-from legends_hours.settings import column_headers
+from legends_hours.settings import COLUMN_HEADERS
 
 
 def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
@@ -14,7 +14,7 @@ def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
     sheet = workbook.active
 
     # Write the column headers to the sheet
-    column_headers = column_headers
+    column_headers = COLUMN_HEADERS
     for col_idx, header in enumerate(column_headers, start=1):
         sheet.cell(row=1, column=col_idx).value = header
 
@@ -26,6 +26,7 @@ def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
             # Apply flag colors based on the 'flag' column
             if column == 'flag':
                 flag_color = str(row['flag'])
+                fill = PatternFill(patternType='solid',fgColor='FFFFFF')  # Default: white
                 if flag_color == '1':
                     fill = PatternFill(patternType='solid',fgColor='FFFF00')  # Yellow
                 elif flag_color == '2':

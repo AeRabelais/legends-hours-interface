@@ -41,8 +41,9 @@ COMMENTS_TABLE_QUERY = """
                             CREATE TABLE IF NOT EXISTS comment (
                                 id TEXT PRIMARY KEY,
                                 comment TEXT,
-                                report_id INTEGER,
+                                report_id TEXT,
                                 FOREIGN KEY (report_id) REFERENCES report (id)
                             );
                             """
 
+COLUMN_HEADERS = ["employee", "hours", "flag"]

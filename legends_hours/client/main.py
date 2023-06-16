@@ -7,7 +7,7 @@ from legends_hours.client.sub_commands import *
 import sys 
 
 
-@Gooey(program_name="Legends Time Events Interface",
+@Gooey(program_name="Legends Time Report Interface",
         advanced=True,
         menu=menu,
         sidebar_title="Commands",
@@ -19,7 +19,7 @@ import sys
 def main():
 
     conn = create_connection()
-    parser = GooeyParser(description="Legends SL Time Events Interface")
+    parser = GooeyParser(description="Legends SL Time Report Interface")
     
     subparsers = parser.add_subparsers(help="subcommand help")
     
@@ -39,7 +39,7 @@ def main():
 
     # Return the over time pdf file.
     overtime_pdf_parser = subparsers.add_parser("export-overtime-pdf", help="Export the pdf listing overtime events.")
-    compile_hours_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
+    overtime_pdf_parser.add_argument("OutputFilePath", type=str, help="The directory where you want the file to be held.", widget="DirChooser", gooey_options = {'label_color': '#ffffff', 'description_color': '#363636'})
 
     args = parser.parse_args()
     if getattr(args, "__command", None) == "parse-time-events":

@@ -60,9 +60,10 @@ def get_weekly_report(conn: sqlite3.Connection, date):
 
     report_query = f'''
             SELECT * FROM report
-            WHERE {date} BETWEEN startDate AND endDate
+            WHERE '{date}' BETWEEN startDate AND endDate
             ORDER BY employee
             '''
+    
     weekly_report = pd.read_sql(report_query, conn)
 
     return weekly_report
@@ -74,7 +75,7 @@ def get_report_by_name_week(conn: sqlite3.Connection, date: str, first_name: str
     # Find the report item matching the date and employee name.
     result = cursor.execute(f'''
         SELECT * FROM report
-        WHERE {date} BETWEEN startDate AND endDate 
+        WHERE '{date}' BETWEEN startDate AND endDate 
         AND firstName='{first_name.upper()}'
         AND lastName='{last_name.upper()}'
         ORDER BY employee
@@ -108,11 +109,11 @@ def get_flagged_employees(conn: sqlite3.Connection, date: str):
 
 def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str):
 
-    flagged_comments_query = """
+    flagged_comments_query = f"""
                             SELECT r.employee, r.hours, r.flag, c.comment
                             FROM report r
                             INNER JOIN comment c ON r.id = c.report_id
-                            WHERE {date} BETWEEN r.startDate AND r.endDate
+                            WHERE '{date}' BETWEEN r.startDate AND r.endDate
                             """
     
     flag_comments = pd.read_sql(flagged_comments_query, conn)
@@ -147,11 +148,11 @@ def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str):
 
 def find_all_employee_names(conn: sqlite3.Connection):
 
-    employees_query = "SELECT DISTINCT firstName || ' ' || lastName AS fullName FROM reports"
+    employees_query = "SELECT DISTINCT firstName || ' ' || lastName AS fullName FROM report"
 
     all_employees = pd.read_sql(employees_query, conn)
 
-    return all_employees['fullName']
+    return list(all_employees['fullName'])
 
 
 # def get_comment_by_id(conn: sqlite3.Connection, report_id: str):

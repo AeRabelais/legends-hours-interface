@@ -1,11 +1,13 @@
-DEFAULT_DB_PATH = "legends_hours.db"
+# ITEM PATHS
+DEFAULT_DB_PATH = "legends_hours/legends_hours.db"
+DEFAULT_ICON_PATH = "legends_hours/images"
 
 # MENU ITEMS
 about_dialog = {
             'type': 'AboutDialog',
             'menuTitle': 'About the Interface',
             'name': 'Legends Hours Interface',
-            'description': 'Replace with description of this application.',
+            'description': 'This interface is used to aggregate and analyze information about employee hours.',
             'version': '0.1.0',
             'copyright': '2023',
             'developer': 'Ashia Livaudais',

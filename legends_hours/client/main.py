@@ -5,6 +5,7 @@ from legends_hours.store.sqlite_db import *
 from legends_hours.file_management.input import *
 from legends_hours.settings import menu
 from legends_hours.client.sub_commands import *
+from legends_hours.settings import DEFAULT_DB_PATH, DEFAULT_ICON_PATH
 import sys 
 
 
@@ -17,10 +18,10 @@ import sys
         sidebar_bg_color="#363636",
         terminal_font_color="#ff0000",
         body_bg_color='#262626',
-        image_dir= localResourcePath('legends_hours/images'))
+        image_dir= localResourcePath(DEFAULT_ICON_PATH))
 def main():
 
-    conn = create_connection(db_file=localResourcePath('legends_hours/legends_hours.db'))
+    conn = create_connection(db_file=localResourcePath(DEFAULT_DB_PATH))
     parser = GooeyParser(description="Legends SL Time Report Interface")
     
     subparsers = parser.add_subparsers(help="subcommand help", dest='command')

@@ -10,6 +10,14 @@ from legends_hours.settings import COLUMN_HEADERS
 
 
 def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
+    """
+    Creates the excel file with aggregated hours for each employee, along with color-filled cells for overtime employees.
+
+    Args:
+        data_frame: The dataframe containing the report information to be represented.
+        file_path: The file path used to store the resulting excel sheet.
+    
+    """
     # Create a new workbook
     workbook = Workbook()
     sheet = workbook.active
@@ -39,7 +47,14 @@ def create_excel_with_flags(data_frame: pd.DataFrame, file_path: str):
 
 
 def create_pdf_with_comments(data_frame: pd.DataFrame, file_path: str):
+    """
+    Creates the overtime pdf report.
 
+    Args:
+        data_frame: The dataframe containing the report information to be represented.
+        file_path: The file path used to store the resulting pdf report.
+   
+    """
     start_date = str(data_frame['startDate'][0])
 
     # Create a list to store the content of each block

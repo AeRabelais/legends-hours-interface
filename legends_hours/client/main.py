@@ -1,5 +1,6 @@
 from gooey.python_bindings.gooey_parser import GooeyParser 
 from gooey.python_bindings.gooey_decorator import Gooey
+from gooey.gui.util.freeze import localResourcePath
 from legends_hours.store.sqlite_db import *
 from legends_hours.file_management.input import *
 from legends_hours.settings import menu
@@ -15,10 +16,11 @@ import sys
         footer_bg_color="#363636",
         sidebar_bg_color="#363636",
         terminal_font_color="#ff0000",
-        body_bg_color='#262626')
+        body_bg_color='#262626',
+        image_dir= localResourcePath('legends_hours/images'))
 def main():
 
-    conn = create_connection(db_file='/Users/ae_rabelais/Documents/legends-hours-interface/legends_hours.db')
+    conn = create_connection(db_file=localResourcePath('legends_hours/legends_hours.db'))
     parser = GooeyParser(description="Legends SL Time Report Interface")
     
     subparsers = parser.add_subparsers(help="subcommand help", dest='command')
@@ -45,13 +47,13 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == 'parse-time-events': # Logic works.
+    if args.command == 'parse-time-events': 
         add_time_events(conn, args)
-    elif args.command == 'add-notes': # Logic works.
+    elif args.command == 'add-notes': 
         add_notes(conn, args)
-    elif args.command == 'compile-week-hours': # Logic works.
+    elif args.command == 'compile-week-hours':
         compile_week_hours(conn, args)
-    elif args.command == 'export-overtime-pdf':# Logi c
+    elif args.command == 'export-overtime-pdf':
         export_overtime_pdf(conn, args)
     else:
         raise ValueError("You've entered an invalid command.")

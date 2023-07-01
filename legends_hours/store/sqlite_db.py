@@ -167,7 +167,6 @@ def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str) -> pd.Dat
 
     return flag_comments
 
-
 def find_all_employee_names(conn: sqlite3.Connection) -> list:
     """
     Returns all of the unique employee names in the database in 'firstName lastName' pairs.

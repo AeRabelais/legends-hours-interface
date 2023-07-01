@@ -3,9 +3,17 @@ from legends_hours.store.sqlite_db import *
 from legends_hours.file_management.input import *
 from legends_hours.file_management.output import *
 import os 
+from sqlite3 import Connection
 
-def add_time_events(conn, args):
 
+def add_time_events(conn: Connection , args) -> None:
+    """
+    Adds a time event to the database from the command line.
+
+    Args:
+        conn: A connection object for the database.
+        args: The args object for interfacing with the command line.
+    """
     print("Parsing time events report for the week.")
 
     report_df = parse_time_file(args.ReportFilePath)
@@ -14,7 +22,18 @@ def add_time_events(conn, args):
     # Message about end command.
     print(f"The time events for the report file have been ingested.")
 
-def add_notes(conn, args):
+def add_notes(conn: Connection, args) -> None:
+    """
+    Adds overtime comments to the database for a specified employee.
+
+    Args:
+        conn: A connection object for the database.
+        args: The args object for interfacing with the command line.
+
+    Raises:
+        ValueError: When a report identifier for the specified combination of employee and date can not be found.
+
+    """
     
     print(f"Searching the database for employee: {args.EmployeeName}, on {args.WeekDay}.")
 
@@ -32,8 +51,18 @@ def add_notes(conn, args):
     # Add comment to the database.
     print("Comment added to the database!")
 
-def compile_week_hours(conn, args):
-    
+def compile_week_hours(conn: Connection, args) -> None:
+    """
+    Compiles the total hours for each employee during the week and produces an excel file.
+
+    Args:
+        conn: A connection object for the database.
+        args: The args object for interfacing with the command line.
+
+    Raises:
+        Warning: if no time report could be found for the user-specified date.
+
+    """
     print(f"Compiling total hours for the following week: {args.WeekDay}.")
 
     # Use get_weekly_report to get all information for the week.
@@ -47,14 +76,27 @@ def compile_week_hours(conn, args):
 
     print(f"The compiled hours excel file has been created at the following path:{args.OutputFilePath}")
 
-def export_overtime_pdf(conn, args):
+def export_overtime_pdf(conn: Connection, args) -> None:
+    """
+    Creates a pdf with listing of employees who have worked overtime and any comments.
+
+    Args:
+        conn: A connection object for the database.
+        args: The args object for interfacing with the command line.
+
+    Raises:
+        Warning: If no employee overtime nor comments could be found about employees.
+
+    """
 
     print(f"Creating an overtime review document for the week of the following date: {args.WeekDay}.")
 
     overtime_comments_df = get_flagged_comments_for_week(conn, args.WeekDay)
+    overtime_comments_df['num_overtime'] = overtime_comments_df['hours'] - 40
+    overtime_comments_df.loc[overtime_comments_df['num_overtime'] < 0, 'num_overtime'] = 0
 
     if len(overtime_comments_df.index) < 1:
-        raise Warning("No comments regarding employee overtime have been left.")
+        raise Warning("No employees have been working overtime or have comments associated with their hours.")
     
     # Give information about the flagged employee, hours, and comments to compile into the PDF.
     create_pdf_with_comments(overtime_comments_df, os.path.join(args.OutputFilePath, f"overtime_review_{args.WeekDay}.pdf"))

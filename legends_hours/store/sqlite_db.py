@@ -112,39 +112,16 @@ def get_flagged_comments_for_week(conn: sqlite3.Connection, date: str):
     flagged_comments_query = f"""
                             SELECT r.employee, r.hours, r.flag, c.comment, r.startDate
                             FROM report r
-                            INNER JOIN comment c ON r.id = c.report_id
+                            LEFT JOIN comment c ON r.id = c.report_id
                             WHERE '{date}' BETWEEN r.startDate AND r.endDate
+                            AND (r.hours > 35 OR c.comment IS NOT NULL)
+                            ORDER BY c.comment IS NULL, r.hours DESC, r.employee
                             """
     
     flag_comments = pd.read_sql(flagged_comments_query, conn)
 
     return flag_comments
 
-# def find_employee_by_name(conn: sqlite3.Connection, first_name: Optional[str], last_name: Optional[str], employee_full_name: Optional[str]):
-#     """
-#     Returns the information related to an employee using the name.
-
-#     Args:
-#         conn: a sqlite3 Connection object.
-#         employee_name: The name of the employee of interest.
-
-#     Returns:
-#         The identifier used to represent the employee of interest.
-#     """
-#     if (first_name and last_name and employee_full_name ) is None:
-#         raise ValueError("A first, last, or full name in the format 'LastName,FirstName' must be provided.")
-    
-#     cursor = conn.cursor()
-
-#     result = cursor.execute(f"""
-#                             SELECT id FROM report 
-#                             WHERE firstName='{first_name}' AND
-#                             lastName='{last_name}'
-#                             GROUP BY startDate
-#                             """)
-#     employee = result.fetchone()
-
-#     return employee
 
 def find_all_employee_names(conn: sqlite3.Connection):
 
@@ -153,17 +130,3 @@ def find_all_employee_names(conn: sqlite3.Connection):
     all_employees = pd.read_sql(employees_query, conn)
 
     return list(all_employees['fullName'])
-
-
-# def get_comment_by_id(conn: sqlite3.Connection, report_id: str):
-    
-#     cursor = conn.cursor()
-
-#     result = cursor.execute(f"""
-#                             SELECT * FROM comment
-#                             WHERE report_id = '{report_id}' 
-#                             """)
-#     comment = result.fetchone()
-
-#     return comment
-

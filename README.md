@@ -25,7 +25,7 @@ Before any of the other subcommands can be run, the user must first ensure that 
 or the report you have contains incorrect information, please use the report file in the directory of this repository at the path `tests/files` to find an example of a valid report.
 Using this file, the following instructions will show users how to interact with the application.
 
-To begin using the application, open the executable's zip file and click `legendscli.exe`. 
+To begin using the application, open the executable's zip file and click `legends_hours_interface.exe`. 
 
 ### Add Time Events
 As mentioned above, before you can run any other subcommands, the user must first ensure some data has been input to the database. In the sidebar of the application, click

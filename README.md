@@ -35,8 +35,6 @@ csv or excel file you would like to add to the database.
 Press `Start` to begin the ingestion process. Once your file has been successfully ingested, you will see a pop-up message saying that your file has been successfully processed. 
 Click `Cancel` to exit the application.
 
-* Note: If you are ingesting a file, you must first exit and restart the application to run other subcommands.
-
 ### Add Notes
 Open the application using the .exe file. To add comments to a user's hour information for the week, click the command `add-notes` in the sidebar of the application. 
 You will see three arguments: `EmployeeName`, `Comments`, and `WeekDay`. In employee name, begin typing the first or last name of the employee you'd like to leave a comment on.
